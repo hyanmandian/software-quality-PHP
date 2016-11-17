@@ -18,8 +18,8 @@ class LeetTest extends PHPUnit_Framework_TestCase
      */
     public function encode()
     {
-        $expect = "@ |: [. I> & Ph C- # ! (/ X 1_ IVI /V () |* (_,) 12 $ + |_| \/ VV )( `/ %";
-        $actual = $this->translator->encode("abcdefghijklmnopqrstuvwxyz");
+        $expect = "@ |: [. I> & Ph C- # ! (/ X 1_ IVI    /V () |* (_,) 12 $ + |_| \/ VV )( `/ %";
+        $actual = $this->translator->encode("abcdefghijklm nopqrstuvwxyz");
     
         $this->assertTrue(stripos($expect, $actual) !== FALSE);
     }
@@ -29,9 +29,9 @@ class LeetTest extends PHPUnit_Framework_TestCase
      */
     public function decode()
     {
-        $expect = "abcdefghijklmnopqrstuvwxyz";
-        $actual = $this->translator->decode("@ |: [. I> & Ph C- # ! (/ X 1_ IVI /V () |* (_,) 12 $ + |_| \/ VV )( `/ %");
-    
+        $expect = "abcdefghijklm nopqrstuvwxyz";
+        $actual = $this->translator->decode("@ |: [. I> & Ph C- # ! (/ X 1_ IVI    /V () |* (_,) 12 $ + |_| \/ VV )( `/ %");
+
         $this->assertTrue(stripos($expect, $actual) !== FALSE);
     }
 }
