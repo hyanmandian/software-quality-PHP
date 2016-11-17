@@ -2,7 +2,7 @@
 
 class Morse implements Language 
 {
-    public function getTokens() 
+    public function getLetters() 
     {
         return [
             "a" => ".-",

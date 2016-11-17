@@ -11,25 +11,28 @@ class Translator
         $this->language = $language;
     }
     
+    private function getCorrectEncodeSeparator($previousLetter, $currentLetter)
+    {
+        if($currentLetter === $this->language->getSeparator())
+            return $this->language->getWordSeparator();
+
+        if(strlen($previousLetter) && $previousLetter !== $this->language->getSeparator())
+            return $this->language->getLetterSeparator();
+    }
+    
     public function encode($str)
     {
         $letters = array_map("strtolower", str_split($str));
         
-        return array_reduce($letters, function ($carry, $letter) {
-            $encodedLetter = "";
+        return array_reduce($letters, function ($carry, $currentLetter) {
+            $previousLetter = substr($carry, -1);
             
-            if($letter === $this->language->getSeparator()) {
-                $encodedLetter.= $this->language->getWordSeparator();
-            } elseif(strlen($carry) && substr($carry, -1) !== $this->language->getSeparator()) {
-                $encodedLetter.= $this->language->getLetterSeparator();
-            }
+            $carry.= $this->getCorrectEncodeSeparator($previousLetter, $currentLetter);
             
-            $token = $this->language->getTokens()[$letter];
+            $encodedLetter = $this->language->getLetters()[$currentLetter];
             
-            $carry.= $encodedLetter;
-            
-            if(isset($token)) {
-                $carry.= $token;
+            if(isset($encodedLetter)) {
+                $carry.= $encodedLetter;
             }
             
             return $carry;
@@ -43,14 +46,15 @@ class Translator
         return array_reduce($words, function ($carry, $word) {
             $letters = explode($this->language->getLetterSeparator(), $word);
             
-            $token = array_reduce($letters, function ($carry, $letter) {
-                $decodedLetter = array_search($letter, $this->language->getTokens());
-                $carry.= $decodedLetter === FALSE ? "" : $decodedLetter;
+            $decodedWord = array_reduce($letters, function ($carry, $letter) {
+                $decodedLetter = array_search($letter, $this->language->getLetters());
+                
+                $carry.= $decodedLetter === FALSE ? null : $decodedLetter;
                 
                 return $carry;
             });
             
-            $carry.= (strlen($carry) ? " " : "") . $token;
+            $carry.= strlen($carry) ? $this->language->getSeparator() : null . $decodedWord;
             
             return $carry;
         });
